@@ -1,0 +1,27 @@
+name: 🔗 Check for Broken Links
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 3 * * *'  # Every day at 3 AM UTC
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🧪 Run Lychee Link Checker
+      uses: lycheeverse/lychee-action@v1.8.0
+      with:
+        args: --verbose --exclude-mail --no-progress ./  # Adjust path as needed
+
+    - name: ✅ Upload Link Check Results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: lychee-report
+        path: ./lychee/out.md
